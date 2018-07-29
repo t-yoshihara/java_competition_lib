@@ -3,13 +3,19 @@ import java.util.Comparator;
 import java.util.Scanner;
 
 
+/**
+ * java 接尾辞配列とLCP配列
+ * sa[i] : 辞書順でi番目のsuffixはsa[i]から始まる.
+ * rank[i] : saの逆関数 rank[sa[i]]=i;
+ * lcp[i] : 辞書順でi番目とi+1番目の共通接頭辞長さ
+ */
 class SuffixArray{
     int N;
     String s;
-    int[] sa;//sa[i] : 辞書順でi番目のsuffixはsa[i]から始まる.
+    int[] sa;
     int[] rank;
     int[] tmp;
-    int[] lcp;//lcp[i] : 辞書順でi番目のsuffixとi+1番目のsuffixの共通接頭辞数はlcp[i]
+    int[] lcp;
     SuffixArray(String s){
         N=s.length();
         this.s=s+'$';//終端文字
@@ -89,6 +95,40 @@ class SuffixArray{
         }
     }
 }
+
+
+
+/**
+ * Z-algorithm
+ * presize[i] : S, S[i:]の共通接頭辞サイズ
+ */
+class Zalgo{
+	String s;
+	int[] presize;
+
+	Zalgo(String s){
+		this.s=s;
+		presize = new int[s.length()];
+		presize[0] = s.length();
+		int index=1, size=0;
+		while(index<s.length()){
+			while(index+size<s.length() && s.charAt(size)==s.charAt(index+size))++size;
+			presize[index]=size;
+			if(size==0){
+				++index;
+				continue;
+			}
+			int k=1;
+			while(k+index < s.length() && k+presize[k]<size){
+				presize[index+k] = presize[k]; ++k;
+			}
+			index+=k;size-=k;
+		}
+	}
+}
+
+
+
 
 class Main{
     public static void main(String[] args){
